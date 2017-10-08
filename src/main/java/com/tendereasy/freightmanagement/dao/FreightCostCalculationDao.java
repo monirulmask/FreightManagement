@@ -15,18 +15,20 @@ import java.util.List;
  */
 @Repository
 @Transactional
-public class FreightCostCalculationDao implements IFreightCostCalculationDao {
-    @PersistenceContext
-    private EntityManager manager;
+public class FreightCostCalculationDao extends BaseDao implements IFreightCostCalculationDao {
 
     public List<EmployeeEntity> getAllEmployees() {
-        List<EmployeeEntity> employees = manager.createQuery("Select a From EmployeeEntity a", EmployeeEntity.class).getResultList();
+        List<EmployeeEntity> employees = em.createQuery("Select a From EmployeeEntity a", EmployeeEntity.class).getResultList();
         return employees;
     }
 
     public EmployeeDTO getEmployeesDTO() {
-        Query query = manager.createNativeQuery("SELECT A.id AS id, A.firstName AS firstName, A.lastName AS lastName, A.email AS email FROM employee A WHERE id=:id", EmployeeDTO.class);
-        List<EmployeeDTO> employeeList = query.setParameter("id", 1).getResultList();
+        String query = "SELECT A.id AS id, A.firstName AS firstName, A.lastName AS lastName, A.email AS email FROM employee A WHERE id=:id";
+        //List<EmployeeDTO> employeeList = query.setParameter("id", 1).getResultList();
+
+        org.hibernate.Query hQuery = hibernateQuery(query, EmployeeDTO.class);
+        hQuery.setParameter("id",1);
+        List<EmployeeDTO> employeeList = hQuery.list();
         return employeeList != null ? employeeList.get(0): null;
     }
 
