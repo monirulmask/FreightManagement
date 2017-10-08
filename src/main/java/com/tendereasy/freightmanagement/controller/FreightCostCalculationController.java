@@ -2,6 +2,7 @@ package com.tendereasy.freightmanagement.controller;
 
 import com.tendereasy.freightmanagement.dto.CustomerResponseMessageDTO;
 import com.tendereasy.freightmanagement.dto.EmployeeDTO;
+import com.tendereasy.freightmanagement.dto.RouteContainer;
 import com.tendereasy.freightmanagement.dto.SearchCriteriaDTO;
 import com.tendereasy.freightmanagement.model.EmployeeEntity;
 import com.tendereasy.freightmanagement.service.IFreightCostCalculationService;
@@ -44,7 +45,6 @@ public class FreightCostCalculationController {
         CustomerResponseMessageDTO response = new CustomerResponseMessageDTO();
 
         if (errors.hasErrors()) {
-
             // get all errors
             response.setMessage(errors.getAllErrors()
                     .stream()
@@ -52,9 +52,14 @@ public class FreightCostCalculationController {
                     .collect(Collectors.joining(",")));
 
             return ResponseEntity.badRequest().body(response);
-
         }
-
+        List<RouteContainer> results = freightCostCalculationService.searchRouteForScenarioOne(searchCriteriaDTO);
+        if (results.isEmpty()) {
+            response.setMessage("no route found!");
+        } else {
+            response.setMessage("success");
+        }
+        response.setResults(results);
         return ResponseEntity.ok(response);
     }
 }

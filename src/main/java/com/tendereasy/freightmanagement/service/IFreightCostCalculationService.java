@@ -1,6 +1,8 @@
 package com.tendereasy.freightmanagement.service;
 
 import com.tendereasy.freightmanagement.dto.EmployeeDTO;
+import com.tendereasy.freightmanagement.dto.RouteContainer;
+import com.tendereasy.freightmanagement.dto.SearchCriteriaDTO;
 import com.tendereasy.freightmanagement.model.EmployeeEntity;
 
 import java.util.List;
@@ -11,4 +13,6 @@ import java.util.List;
 public interface IFreightCostCalculationService {
     public List<EmployeeEntity> getAllEmployees();
     public EmployeeDTO getEmployee();
+
+    public List<RouteContainer> searchRouteForScenarioOne(SearchCriteriaDTO searchCriteriaDTO);
 }

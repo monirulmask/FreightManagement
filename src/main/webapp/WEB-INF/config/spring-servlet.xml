@@ -48,7 +48,7 @@
         <property name="driverClassName" value="com.mysql.jdbc.Driver" />
         <property name="url" value="jdbc:mysql://localhost:3306/freightmanagement" />
         <property name="username" value="root" />
-        <property name="password" value="" />
+        <property name="password" value="sa1234" />
     </bean>
 
     <!-- This transaction manager is appropriate for applications that use a single JPA EntityManagerFactory for transactional data access.
