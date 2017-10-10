@@ -1,17 +1,21 @@
 package com.tendereasy.freightmanagement.dto;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
  * Created by monir on 10/6/2017.
  */
-public class RouteDetailsDTO {
+public class RouteDetailsDTO implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private Integer sourceID;
     private String sourceName;
     private Integer destinationID;
     private String destinationName;
     private String modeOfTransports;
     private Integer containerSize;
+    private Integer duration;
     private BigDecimal cost;
 
     public Integer getSourceID() {
@@ -60,6 +64,14 @@ public class RouteDetailsDTO {
 
     public void setContainerSize(Integer containerSize) {
         this.containerSize = containerSize;
+    }
+
+    public Integer getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Integer duration) {
+        this.duration = duration;
     }
 
     public BigDecimal getCost() {

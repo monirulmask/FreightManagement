@@ -1,9 +1,6 @@
 package com.tendereasy.freightmanagement.controller;
 
-import com.tendereasy.freightmanagement.dto.CustomerResponseMessageDTO;
-import com.tendereasy.freightmanagement.dto.EmployeeDTO;
-import com.tendereasy.freightmanagement.dto.RouteContainer;
-import com.tendereasy.freightmanagement.dto.SearchCriteriaDTO;
+import com.tendereasy.freightmanagement.dto.*;
 import com.tendereasy.freightmanagement.model.EmployeeEntity;
 import com.tendereasy.freightmanagement.service.IFreightCostCalculationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +50,7 @@ public class FreightCostCalculationController {
 
             return ResponseEntity.badRequest().body(response);
         }
-        List<RouteContainer> results = freightCostCalculationService.searchRouteForScenarioOne(searchCriteriaDTO);
+        List<AllPossibleRouteDetailsDTO> results = freightCostCalculationService.searchRouteForScenarioOne(searchCriteriaDTO);
         if (results.isEmpty()) {
             response.setMessage("no route found!");
         } else {

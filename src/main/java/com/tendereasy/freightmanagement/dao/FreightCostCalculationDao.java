@@ -35,12 +35,21 @@ public class FreightCostCalculationDao extends BaseDao implements IFreightCostCa
     }
 
     @Override
-    public List<RouteDetailsDTO> getAllRouteListByInitialCriteria(SearchCriteriaDTO searchCriteriaDTO) {
-        String query = "SELECT lc.source AS sourceID,s.locationname AS sourceName, lc.destination AS destinationID, d.locationname AS destinationName, lc.modeOfTransports AS modeOfTransports, lc.containerSize AS containerSize, lc.cost AS cost FROM locationvscost lc INNER JOIN location s ON lc.source = s.locationid INNER JOIN location d ON lc.destination = d.locationid WHERE lc.containerSize=:containerSize";
+    public List<RouteDetailsDTO> getAllRouteListByInitialCriteria(SearchCriteriaDTO searchCriteriaDTO,String modeOfTransportQuery) {
+        String query = "SELECT lc.source AS sourceID,s.locationname AS sourceName, lc.destination AS destinationID, d.locationname AS destinationName, lc.modeOfTransports AS modeOfTransports, lc.containerSize AS containerSize, lc.cost as  cost , lc.duration AS duration FROM locationvscost lc INNER JOIN location s ON lc.source = s.locationid INNER JOIN location d ON lc.destination = d.locationid WHERE lc.containerSize=:containerSize "+modeOfTransportQuery;
         org.hibernate.Query hQuery = hibernateQuery(query, RouteDetailsDTO.class);
         hQuery.setParameter("containerSize",searchCriteriaDTO.getContainerSize());
         List<RouteDetailsDTO> routeDetailsDTOList = hQuery.list();
         return routeDetailsDTOList;
+    }
+
+    @Override
+    public Integer getLocationID(String locationName) {
+        String query = "SELECT s.locationid AS sourceID FROM location s WHERE s.locationname=:locationName";
+        org.hibernate.Query hQuery = hibernateQuery(query, Integer.class);
+        hQuery.setParameter("locationName",locationName);
+        Integer locationID = hQuery.getFirstResult();
+        return locationID;
     }
 
 

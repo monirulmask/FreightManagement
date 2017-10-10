@@ -7,7 +7,7 @@ import java.util.List;
  */
 public class CustomerResponseMessageDTO {
     private String message;
-    private List<RouteContainer> results;
+    private List<AllPossibleRouteDetailsDTO> results;
 
     public String getMessage() {
         return message;
@@ -17,11 +17,11 @@ public class CustomerResponseMessageDTO {
         this.message = message;
     }
 
-    public List<RouteContainer> getResults() {
+    public List<AllPossibleRouteDetailsDTO> getResults() {
         return results;
     }
 
-    public void setResults(List<RouteContainer> results) {
+    public void setResults(List<AllPossibleRouteDetailsDTO> results) {
         this.results = results;
     }
 }

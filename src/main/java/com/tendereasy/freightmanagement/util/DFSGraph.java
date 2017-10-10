@@ -6,12 +6,15 @@ import java.util.*;
  * Created by monir on 10/9/2017.
  */
 public class DFSGraph {
-    int V;
-    Map<Integer, List<Integer>> adj; // Adjacency list
+    private int V;
+    private Map<Integer, List<Integer>> adj; // Adjacency list
 
-    public DFSGraph(int v){
-        V = v;
+    public DFSGraph(){
         adj = new HashMap<Integer, List<Integer>>();
+    }
+
+    public void setV(int v){
+        V = v;
     }
 
     public void addEdge(int u, int v){

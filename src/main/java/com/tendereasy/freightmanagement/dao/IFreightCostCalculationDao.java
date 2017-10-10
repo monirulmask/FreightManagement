@@ -14,5 +14,7 @@ public interface IFreightCostCalculationDao {
     public List<EmployeeEntity> getAllEmployees();
     public EmployeeDTO getEmployeesDTO();
 
-    public List<RouteDetailsDTO> getAllRouteListByInitialCriteria(SearchCriteriaDTO searchCriteriaDTO);
+    public List<RouteDetailsDTO> getAllRouteListByInitialCriteria(SearchCriteriaDTO searchCriteriaDTO, String modeOfTransportQuery);
+
+    public Integer getLocationID(String locationName);
 }
