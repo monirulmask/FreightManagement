@@ -21,11 +21,6 @@ public class FreightCostCalculationService implements IFreightCostCalculationSer
     private IFreightCostCalculationDao freightCostCalculationDao;
 
     @Override
-    public List<EmployeeEntity> getAllEmployees() {
-        return freightCostCalculationDao.getAllEmployees();
-    }
-
-    @Override
     public EmployeeDTO getEmployee() {
         return freightCostCalculationDao.getEmployeesDTO();
     }
@@ -40,18 +35,14 @@ public class FreightCostCalculationService implements IFreightCostCalculationSer
         Integer sourceLocationID = freightCostCalculationDao.getLocationID(searchCriteriaDTO.getSource());
         Integer destinationLocationID = freightCostCalculationDao.getLocationID(searchCriteriaDTO.getDestination());
 
-        /*if (false && sourceLocationID == null || destinationLocationID == null) {
+        if (sourceLocationID == null || destinationLocationID == null) {
             return routeList;
-        }*/
+        }
 
         if (searchCriteriaDTO.getModeOfTransports() != null && !Arrays.asList(searchCriteriaDTO.getModeOfTransports()).contains("All")) {
-            /*String delim = searchCriteriaDTO.getModeOfTransports().stream().
-                    map(Object::toString).
-                    collect(Collectors.joining(",")).toString();*/
             String delim = searchCriteriaDTO.getModeOfTransports().stream()
                     .map((s) -> "\"" + s + "\"")
                     .collect(Collectors.joining(", "));
-
 
             modeOfTransportQuery = " AND lc.modeOfTransports IN(".concat(delim).concat(")");
         }
@@ -69,7 +60,7 @@ public class FreightCostCalculationService implements IFreightCostCalculationSer
             graph.addEdge(routeDetailsDTO.getSourceID(), routeDetailsDTO.getDestinationID());
         }
         graph.setV(uniqueRoute.size());
-        List<List<Integer>> possiblePathList = graph.getAllPaths(1, 4);
+        List<List<Integer>> possiblePathList = graph.getAllPaths(sourceLocationID, destinationLocationID);
 
         if (possiblePathList != null && !possiblePathList.isEmpty()) {
             for (List<Integer> possiblePath : possiblePathList) {

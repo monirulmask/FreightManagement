@@ -11,7 +11,6 @@ import java.util.List;
  * Created by monir on 10/5/2017.
  */
 public interface IFreightCostCalculationService {
-    public List<EmployeeEntity> getAllEmployees();
 
     public EmployeeDTO getEmployee();
 

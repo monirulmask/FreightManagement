@@ -27,8 +27,7 @@ public class FreightCostCalculationController {
 
     @RequestMapping(method = RequestMethod.GET)
     public List<EmployeeEntity> index(Model model) {
-        List<EmployeeEntity> testList = freightCostCalculationService.getAllEmployees();
-        return testList;
+        return null;
     }
 
     @RequestMapping(value = "/getSingleEmployee", method = RequestMethod.GET)
