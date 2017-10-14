@@ -30,10 +30,6 @@ public class FreightCostCalculationService implements IFreightCostCalculationSer
     @Autowired
     private IFreightCostCalculationDao freightCostCalculationDao;
 
-    @Override
-    public EmployeeDTO getEmployee() {
-        return freightCostCalculationDao.getEmployeesDTO();
-    }
 
     @Override
     public List<AllPossibleRouteDetailsDTO> searchRouteForScenarioOne(SearchCriteriaDTO searchCriteriaDTO) {

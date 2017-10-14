@@ -26,14 +26,8 @@ public class FreightCostCalculationController {
     private IFreightCostCalculationService freightCostCalculationService;
 
     @RequestMapping(method = RequestMethod.GET)
-    public List<EmployeeEntity> index(Model model) {
-        return null;
-    }
-
-    @RequestMapping(value = "/getSingleEmployee", method = RequestMethod.GET)
-    public EmployeeDTO setupForm(Model model) {
-        EmployeeDTO employee = freightCostCalculationService.getEmployee();
-        return employee;
+    public String index(Model model) {
+        return "hello";
     }
 
     @RequestMapping(value = "/scenarioOne", method = RequestMethod.POST, headers = "Accept=application/json")
