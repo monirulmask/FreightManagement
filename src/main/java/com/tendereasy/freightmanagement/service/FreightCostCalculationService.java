@@ -115,12 +115,11 @@ public class FreightCostCalculationService implements IFreightCostCalculationSer
 
         //get Source and destination ID
         Integer sourceLocationID = freightCostCalculationDao.getLocationID(searchCriteriaDTO.getSource());
-        Integer destinationLocationID = null;//freightCostCalculationDao.getLocationID(searchCriteriaDTO.getDestination());
+        Integer destinationLocationID = freightCostCalculationDao.getLocationID(searchCriteriaDTO.getDestination());
 
         if (sourceLocationID != null && destinationLocationID == null) {
             List<Integer> derivedLocation = getDerivedLocation(searchCriteriaDTO.getSource() ,searchCriteriaDTO.getDestination());
-            for(Integer derivedLocationID : derivedLocation){
-                //Boolean isModeAll = Stream.of().anyMatch(x -> x.equals("All"));
+            if(derivedLocation!=null && derivedLocation.size() > 0){
                 Boolean isModeAll = searchCriteriaDTO.getModeOfTransports().contains("All");
                 if (!isModeAll) {
                     String delim = searchCriteriaDTO.getModeOfTransports().stream()
@@ -144,41 +143,50 @@ public class FreightCostCalculationService implements IFreightCostCalculationSer
                 }
                 Integer edge = Collections.max(uniqueRoute)+1;
                 graph.setV(edge);
-                List<List<Integer>> possiblePathList = graph.getAllPaths(sourceLocationID, derivedLocationID);
 
-                if (possiblePathList != null && !possiblePathList.isEmpty()) {
-                    for (List<Integer> possiblePath : possiblePathList) {
-                        BigDecimal totalCost = BigDecimal.ZERO;
-                        Integer totalDuration = 0;
-                        AllPossibleRouteDetailsDTO allPossibleRouteDetailsDTO = new AllPossibleRouteDetailsDTO();
-                        List<ResponseRouteDetailsDTO> responseRouteDetailsDTOList = new ArrayList<>();
-                        for (Integer i = 0; i < possiblePath.size() - 1; i++) {
-                            Integer source = possiblePath.get(i);
-                            Integer destination = possiblePath.get(i + 1);
-                            RouteDetailsDTO routeDetailsDTO = routeDetailsDTOList.stream().
-                                    filter(x -> x.getSourceID() == source && x.getDestinationID() == destination)
-                                    .findAny()
-                                    .orElse(null);
-                            if (routeDetailsDTO != null) {
-                                ResponseRouteDetailsDTO responseRouteDetailsDTO = convertToResponseRouteDetailsDTO(routeDetailsDTO);
-                                totalCost = totalCost.add(responseRouteDetailsDTO.getCost());
-                                totalDuration += responseRouteDetailsDTO.getDuration();
-                                responseRouteDetailsDTOList.add(responseRouteDetailsDTO);
+                for(Integer derivedLocationID : derivedLocation){
+                    List<List<Integer>> possiblePathList = graph.getAllPaths(sourceLocationID, derivedLocationID);
+
+                    if (possiblePathList != null && !possiblePathList.isEmpty()) {
+                        for (List<Integer> possiblePath : possiblePathList) {
+                            BigDecimal totalCost = BigDecimal.ZERO;
+                            Integer totalDuration = 0;
+                            AllPossibleRouteDetailsDTO allPossibleRouteDetailsDTO = new AllPossibleRouteDetailsDTO();
+                            List<ResponseRouteDetailsDTO> responseRouteDetailsDTOList = new ArrayList<>();
+                            for (Integer i = 0; i < possiblePath.size() - 1; i++) {
+                                Integer source = possiblePath.get(i);
+                                Integer destination = possiblePath.get(i + 1);
+                                RouteDetailsDTO routeDetailsDTO = routeDetailsDTOList.stream().
+                                        filter(x -> x.getSourceID() == source && x.getDestinationID() == destination)
+                                        .findAny()
+                                        .orElse(null);
+                                if (routeDetailsDTO != null) {
+                                    ResponseRouteDetailsDTO responseRouteDetailsDTO = convertToResponseRouteDetailsDTO(routeDetailsDTO);
+                                    totalCost = totalCost.add(responseRouteDetailsDTO.getCost());
+                                    totalDuration += responseRouteDetailsDTO.getDuration();
+                                    responseRouteDetailsDTOList.add(responseRouteDetailsDTO);
+                                }
                             }
+                            allPossibleRouteDetailsDTO.setRoute(responseRouteDetailsDTOList);
+                            allPossibleRouteDetailsDTO.setTotalCost(totalCost);
+                            allPossibleRouteDetailsDTO.setTotalDuration(totalDuration);
+                            routeList.add(allPossibleRouteDetailsDTO);
                         }
-                        allPossibleRouteDetailsDTO.setRoute(responseRouteDetailsDTOList);
-                        allPossibleRouteDetailsDTO.setTotalCost(totalCost);
-                        allPossibleRouteDetailsDTO.setTotalDuration(totalDuration);
-                        routeList.add(allPossibleRouteDetailsDTO);
                     }
                 }
             }
-
         }
 
         return routeList;
     }
 
+    /***
+     * Get all derived Location
+     * @param sourceName
+     * @param destinationName
+     * @return
+     * @throws Exception
+     */
     private List<Integer> getDerivedLocation(String sourceName, String destinationName) throws Exception {
         List<Integer> derivedLocation = new ArrayList<>();
         List<LocationInfoDTO> locationInfoDTOList = freightCostCalculationDao.getLocationInfoDTOList(sourceName);
@@ -196,6 +204,14 @@ public class FreightCostCalculationService implements IFreightCostCalculationSer
         return derivedLocation;
     }
 
+    /***
+     *
+     * Return Distance for given origin and destination.
+     * @param origin
+     * @param destination
+     * @return
+     * @throws Exception
+     */
     private DistanceMatrix estimateRouteDistance(LatLng origin, LatLng destination) throws Exception {
         DistanceMatrixApiRequest req = DistanceMatrixApi.newRequest(context);
         DistanceMatrix trix = req.origins(origin)
@@ -205,6 +221,12 @@ public class FreightCostCalculationService implements IFreightCostCalculationSer
         return trix;
     }
 
+    /***
+     * Return Return Lat and Log By City Name(Uses Google GeoCode API)
+     * @param cityName
+     * @return
+     * @throws Exception
+     */
     private GeocodingResult getLatLongByCity(String cityName) throws Exception {
         GeocodingResult[] results = new GeocodingResult[0];
         results = GeocodingApi.geocode(context,
@@ -213,6 +235,13 @@ public class FreightCostCalculationService implements IFreightCostCalculationSer
     }
 
 
+    /***
+     *  Checking if route is valid by cost and duration
+     * @param searchCriteriaDTO
+     * @param totalCost
+     * @param totalDuration
+     * @return
+     */
     private boolean isValidateCostAndDuration(SearchCriteriaDTO searchCriteriaDTO, BigDecimal totalCost, Integer totalDuration) {
         if (searchCriteriaDTO.getDurationFrom() != null && searchCriteriaDTO.getDurationTo() != null && !(searchCriteriaDTO.getDurationFrom() <= totalDuration && searchCriteriaDTO.getDurationTo() >= totalDuration)) {
             return false;
@@ -224,6 +253,11 @@ public class FreightCostCalculationService implements IFreightCostCalculationSer
         return true;
     }
 
+    /**
+     * Converting for output DTO
+     * @param routeDetailsDTO
+     * @return
+     */
     private ResponseRouteDetailsDTO convertToResponseRouteDetailsDTO(RouteDetailsDTO routeDetailsDTO) {
         ResponseRouteDetailsDTO responseRouteDetailsDTO = new ResponseRouteDetailsDTO();
         responseRouteDetailsDTO.setFrom(routeDetailsDTO.getSourceName());

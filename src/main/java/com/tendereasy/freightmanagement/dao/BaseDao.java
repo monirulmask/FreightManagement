@@ -23,6 +23,10 @@ public abstract class BaseDao {
         return getCurrentSession().createSQLQuery(query).setResultTransformer(Transformers.aliasToBean(dtoClazz));
     }
 
+    protected org.hibernate.Query hibernateUniqueQuery(String query){
+        return getCurrentSession().createSQLQuery(query);
+    }
+
     protected Query persistenceQuery(String query){
         return em.createNativeQuery(query);
     }

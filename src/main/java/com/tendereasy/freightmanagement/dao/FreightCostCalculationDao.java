@@ -42,9 +42,10 @@ public class FreightCostCalculationDao extends BaseDao implements IFreightCostCa
     @Override
     public Integer getLocationID(String locationName) {
         String query = "SELECT s.locationid AS sourceID FROM location s WHERE s.locationname=:locationName";
-        Query pQuery = persistenceQuery(query);
-        pQuery.setParameter("locationName",locationName);
-        return (Integer)pQuery.getSingleResult();
+        org.hibernate.Query hQuery = hibernateUniqueQuery(query);
+        hQuery.setParameter("locationName",locationName);
+        Integer locationID = (Integer)hQuery.uniqueResult();
+        return locationID;
     }
 
     @Override
