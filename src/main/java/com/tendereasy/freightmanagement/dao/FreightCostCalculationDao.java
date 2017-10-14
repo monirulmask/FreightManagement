@@ -1,6 +1,7 @@
 package com.tendereasy.freightmanagement.dao;
 
 import com.tendereasy.freightmanagement.dto.EmployeeDTO;
+import com.tendereasy.freightmanagement.dto.LocationInfoDTO;
 import com.tendereasy.freightmanagement.dto.RouteDetailsDTO;
 import com.tendereasy.freightmanagement.dto.SearchCriteriaDTO;
 import com.tendereasy.freightmanagement.model.EmployeeEntity;
@@ -44,6 +45,15 @@ public class FreightCostCalculationDao extends BaseDao implements IFreightCostCa
         Query pQuery = persistenceQuery(query);
         pQuery.setParameter("locationName",locationName);
         return (Integer)pQuery.getSingleResult();
+    }
+
+    @Override
+    public List<LocationInfoDTO> getLocationInfoDTOList(String sourceName) {
+        String query = "SELECT l.locationid AS locationID,l.locationname AS locationName, l.locationlat AS latitude, l.locationlong AS longitude FROM location l WHERE l.locationname<>:sourceName";
+        org.hibernate.Query hQuery = hibernateQuery(query, LocationInfoDTO.class);
+        hQuery.setParameter("sourceName",sourceName);
+        List<LocationInfoDTO> locationInfoDTOList = hQuery.list();
+        return locationInfoDTOList;
     }
 
 
