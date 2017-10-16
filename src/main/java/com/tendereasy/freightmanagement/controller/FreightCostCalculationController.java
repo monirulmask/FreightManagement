@@ -1,7 +1,8 @@
 package com.tendereasy.freightmanagement.controller;
 
-import com.tendereasy.freightmanagement.dto.*;
-import com.tendereasy.freightmanagement.model.EmployeeEntity;
+import com.tendereasy.freightmanagement.dto.AllPossibleRouteDetailsDTO;
+import com.tendereasy.freightmanagement.dto.CustomerResponseMessageDTO;
+import com.tendereasy.freightmanagement.dto.SearchCriteriaDTO;
 import com.tendereasy.freightmanagement.service.IFreightCostCalculationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +32,7 @@ public class FreightCostCalculationController {
     }
 
     @RequestMapping(value = "/scenarioOne", method = RequestMethod.POST, headers = "Accept=application/json")
-    public ResponseEntity<?> scenarioOne(@Valid @RequestBody SearchCriteriaDTO searchCriteriaDTO , Errors errors) {
+    public ResponseEntity<?> scenarioOne(@Valid @RequestBody SearchCriteriaDTO searchCriteriaDTO, Errors errors) {
         CustomerResponseMessageDTO response = new CustomerResponseMessageDTO();
 
         if (errors.hasErrors()) {
@@ -54,7 +55,7 @@ public class FreightCostCalculationController {
     }
 
     @RequestMapping(value = "/scenarioTwo", method = RequestMethod.POST, headers = "Accept=application/json")
-    public ResponseEntity<?> scenarioTwo(@Valid @RequestBody SearchCriteriaDTO searchCriteriaDTO , Errors errors) throws Exception {
+    public ResponseEntity<?> scenarioTwo(@Valid @RequestBody SearchCriteriaDTO searchCriteriaDTO, Errors errors) throws Exception {
         CustomerResponseMessageDTO response = new CustomerResponseMessageDTO();
 
         if (errors.hasErrors()) {
