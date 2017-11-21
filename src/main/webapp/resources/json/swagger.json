@@ -73,17 +73,17 @@
           "format": "int32"
         },
         "costFrom": {
-          "type": "integer",
-          "format": "int32"
+          "type": "number",
+          "format": "double"
         },
         "costTo": {
-          "type": "integer",
-          "format": "int32"
+          "type": "number",
+          "format": "double"
         }
       },
       "xml": {"name": "SearchCriteriaOne"}
     },
-    "ApiResponse": {
+    "CustomerResponseMessage": {
       "type": "object",
       "properties": {
         "code": {
@@ -91,7 +91,12 @@
           "format": "int32"
         },
         "message": {"type": "string"},
-        "results": {"type": "string"}
+        "results": {
+          "type":"array",
+          "items":{
+            "type":"object"
+          }
+        }
       }
     }
   }
