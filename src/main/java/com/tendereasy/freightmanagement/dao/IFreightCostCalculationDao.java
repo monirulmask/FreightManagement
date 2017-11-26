@@ -3,6 +3,7 @@ package com.tendereasy.freightmanagement.dao;
 import com.tendereasy.freightmanagement.dto.LocationInfoDTO;
 import com.tendereasy.freightmanagement.dto.RouteDetailsDTO;
 import com.tendereasy.freightmanagement.dto.SearchCriteriaDTO;
+import com.tendereasy.freightmanagement.dto.SearchResponseDTO;
 
 import java.util.List;
 
@@ -16,4 +17,6 @@ public interface IFreightCostCalculationDao {
     public Integer getLocationID(String locationName);
 
     public List<LocationInfoDTO> getLocationInfoDTOList(String sourceName);
+
+    public List<SearchResponseDTO> getAllRouteListBySP(SearchCriteriaDTO searchCriteriaDTO);
 }

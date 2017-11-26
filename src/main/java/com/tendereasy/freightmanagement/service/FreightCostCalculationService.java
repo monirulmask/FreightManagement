@@ -176,6 +176,12 @@ public class FreightCostCalculationService implements IFreightCostCalculationSer
         return routeList;
     }
 
+    @Override
+    public List<AllPossibleRouteDetailsDTO> searchRouteForScenarioThree(SearchCriteriaDTO searchCriteriaDTO) {
+        List<SearchResponseDTO> searchResponseDTOList = freightCostCalculationDao.getAllRouteListBySP(searchCriteriaDTO);
+        return null;
+    }
+
     /***
      * Get all derived Location
      * @param sourceName

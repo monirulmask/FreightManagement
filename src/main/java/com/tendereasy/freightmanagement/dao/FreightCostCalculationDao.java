@@ -3,6 +3,7 @@ package com.tendereasy.freightmanagement.dao;
 import com.tendereasy.freightmanagement.dto.LocationInfoDTO;
 import com.tendereasy.freightmanagement.dto.RouteDetailsDTO;
 import com.tendereasy.freightmanagement.dto.SearchCriteriaDTO;
+import com.tendereasy.freightmanagement.dto.SearchResponseDTO;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,6 +42,18 @@ public class FreightCostCalculationDao extends BaseDao implements IFreightCostCa
         hQuery.setParameter("sourceName", sourceName);
         List<LocationInfoDTO> locationInfoDTOList = hQuery.list();
         return locationInfoDTOList;
+    }
+
+    @Override
+    public List<SearchResponseDTO> getAllRouteListBySP(SearchCriteriaDTO searchCriteriaDTO) {
+        //String query = "CALL usp_get_route_details('Stockholm','Orlando','',20,null,null,null,null)";
+        String query = "CALL usp_get_route_details(:source,:destination,'',:containerSize,null,null,null,null)";
+        org.hibernate.Query hQuery = hibernateQuery(query, SearchResponseDTO.class);
+        hQuery.setParameter("source", searchCriteriaDTO.getSource());
+        hQuery.setParameter("destination", searchCriteriaDTO.getDestination());
+        hQuery.setParameter("containerSize", searchCriteriaDTO.getContainerSize());
+        List<SearchResponseDTO> searchResponseDTOList = hQuery.list();
+        return searchResponseDTOList;
     }
 
 

@@ -77,4 +77,19 @@ public class FreightCostCalculationController {
         response.setResults(results);
         return ResponseEntity.ok(response);
     }
+
+    @RequestMapping(value = "/scenarioThree", method = RequestMethod.POST, headers = "Accept=application/json")
+    public ResponseEntity<?> scenarioThree(@Valid @RequestBody SearchCriteriaDTO searchCriteriaDTO, Errors errors) throws Exception {
+        CustomerResponseMessageDTO response = new CustomerResponseMessageDTO();
+
+        List<AllPossibleRouteDetailsDTO> results = freightCostCalculationService.searchRouteForScenarioThree(searchCriteriaDTO);
+        if (results.isEmpty()) {
+            response.setMessage("no route found!");
+        } else {
+            response.setMessage("success");
+        }
+        response.setResults(results);
+        return ResponseEntity.ok(response);
+    }
+
 }

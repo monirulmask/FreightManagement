@@ -13,4 +13,6 @@ public interface IFreightCostCalculationService {
     public List<AllPossibleRouteDetailsDTO> searchRouteForScenarioOne(SearchCriteriaDTO searchCriteriaDTO);
 
     public List<AllPossibleRouteDetailsDTO> searchRouteForScenarioTwo(SearchCriteriaDTO searchCriteriaDTO) throws Exception;
+
+    public List<AllPossibleRouteDetailsDTO> searchRouteForScenarioThree(SearchCriteriaDTO searchCriteriaDTO);
 }
