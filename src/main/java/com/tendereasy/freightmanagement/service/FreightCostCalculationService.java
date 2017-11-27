@@ -1,5 +1,8 @@
 package com.tendereasy.freightmanagement.service;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.maps.DistanceMatrixApi;
 import com.google.maps.DistanceMatrixApiRequest;
 import com.google.maps.GeoApiContext;
@@ -14,10 +17,10 @@ import com.tendereasy.freightmanagement.util.DFSGraph;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Created by monir on 10/5/2017.
@@ -66,7 +69,7 @@ public class FreightCostCalculationService implements IFreightCostCalculationSer
             uniqueRoute.add(routeDetailsDTO.getDestinationID());
             graph.addEdge(routeDetailsDTO.getSourceID(), routeDetailsDTO.getDestinationID());
         }
-        Integer edge = Collections.max(uniqueRoute)+1;
+        Integer edge = Collections.max(uniqueRoute) + 1;
         graph.setV(edge);
         List<List<Integer>> possiblePathList = graph.getAllPaths(sourceLocationID, destinationLocationID);
 
@@ -104,6 +107,25 @@ public class FreightCostCalculationService implements IFreightCostCalculationSer
     }
 
     @Override
+    public List<AllPossibleRouteDetailsDTO> searchRouteForScenarioThree(SearchCriteriaDTO searchCriteriaDTO) throws IOException {
+        List<AllPossibleRouteDetailsDTO> routeList = new ArrayList<>();
+        List<SearchResponseDTO> searchResponseDTOList = freightCostCalculationDao.getAllRouteListBySP(searchCriteriaDTO);
+        if (searchResponseDTOList != null && !searchResponseDTOList.isEmpty()) {
+            ObjectMapper objectMapper = new ObjectMapper();
+            for(SearchResponseDTO searchResponseDTO: searchResponseDTOList){
+                AllPossibleRouteDetailsDTO allPossibleRouteDetailsDTO = new AllPossibleRouteDetailsDTO();
+                String jsonRoute = "["+searchResponseDTO.getFullRoute()+"]";
+                List<ResponseRouteDetailsDTO> routeDetailsList = objectMapper.readValue(jsonRoute, new TypeReference<List<ResponseRouteDetailsDTO>>(){});
+                allPossibleRouteDetailsDTO.setRoute(routeDetailsList);
+                allPossibleRouteDetailsDTO.setTotalDuration(searchResponseDTO.getDuration());
+                allPossibleRouteDetailsDTO.setTotalCost(searchResponseDTO.getCost());
+                routeList.add(allPossibleRouteDetailsDTO);
+            }
+        }
+        return routeList;
+    }
+
+    @Override
     public List<AllPossibleRouteDetailsDTO> searchRouteForScenarioTwo(SearchCriteriaDTO searchCriteriaDTO) throws Exception {
         List<AllPossibleRouteDetailsDTO> routeList = new ArrayList<>();
         Set<Integer> uniqueRoute = new HashSet<Integer>();
@@ -114,8 +136,8 @@ public class FreightCostCalculationService implements IFreightCostCalculationSer
         Integer destinationLocationID = freightCostCalculationDao.getLocationID(searchCriteriaDTO.getDestination());
 
         if (sourceLocationID != null && destinationLocationID == null) {
-            List<Integer> derivedLocation = getDerivedLocation(searchCriteriaDTO.getSource() ,searchCriteriaDTO.getDestination());
-            if(derivedLocation!=null && derivedLocation.size() > 0){
+            List<Integer> derivedLocation = getDerivedLocation(searchCriteriaDTO.getSource(), searchCriteriaDTO.getDestination());
+            if (derivedLocation != null && derivedLocation.size() > 0) {
                 Boolean isModeAll = searchCriteriaDTO.getModeOfTransports().contains("All");
                 if (!isModeAll) {
                     String delim = searchCriteriaDTO.getModeOfTransports().stream()
@@ -137,10 +159,10 @@ public class FreightCostCalculationService implements IFreightCostCalculationSer
                     uniqueRoute.add(routeDetailsDTO.getDestinationID());
                     graph.addEdge(routeDetailsDTO.getSourceID(), routeDetailsDTO.getDestinationID());
                 }
-                Integer edge = Collections.max(uniqueRoute)+1;
+                Integer edge = Collections.max(uniqueRoute) + 1;
                 graph.setV(edge);
 
-                for(Integer derivedLocationID : derivedLocation){
+                for (Integer derivedLocationID : derivedLocation) {
                     List<List<Integer>> possiblePathList = graph.getAllPaths(sourceLocationID, derivedLocationID);
 
                     if (possiblePathList != null && !possiblePathList.isEmpty()) {
@@ -174,16 +196,13 @@ public class FreightCostCalculationService implements IFreightCostCalculationSer
         }
 
         return routeList;
+
     }
 
-    @Override
-    public List<AllPossibleRouteDetailsDTO> searchRouteForScenarioThree(SearchCriteriaDTO searchCriteriaDTO) {
-        List<SearchResponseDTO> searchResponseDTOList = freightCostCalculationDao.getAllRouteListBySP(searchCriteriaDTO);
-        return null;
-    }
 
-    /***
+    /**
      * Get all derived Location
+     *
      * @param sourceName
      * @param destinationName
      * @return
@@ -206,9 +225,9 @@ public class FreightCostCalculationService implements IFreightCostCalculationSer
         return derivedLocation;
     }
 
-    /***
-     *
+    /**
      * Return Distance for given origin and destination.
+     *
      * @param origin
      * @param destination
      * @return
@@ -223,8 +242,9 @@ public class FreightCostCalculationService implements IFreightCostCalculationSer
         return trix;
     }
 
-    /***
+    /**
      * Return Return Lat and Log By City Name(Uses Google GeoCode API)
+     *
      * @param cityName
      * @return
      * @throws Exception
@@ -237,8 +257,9 @@ public class FreightCostCalculationService implements IFreightCostCalculationSer
     }
 
 
-    /***
-     *  Checking if route is valid by cost and duration
+    /**
+     * Checking if route is valid by cost and duration
+     *
      * @param searchCriteriaDTO
      * @param totalCost
      * @param totalDuration
@@ -257,6 +278,7 @@ public class FreightCostCalculationService implements IFreightCostCalculationSer
 
     /**
      * Converting for output DTO
+     *
      * @param routeDetailsDTO
      * @return
      */
