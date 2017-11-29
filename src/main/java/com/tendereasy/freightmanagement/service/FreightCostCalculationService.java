@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by monir on 10/5/2017.
@@ -28,11 +29,24 @@ public class FreightCostCalculationService implements IFreightCostCalculationSer
     @Autowired
     private IFreightCostCalculationDao freightCostCalculationDao;
 
-
+    /***
+     *
+     * @param searchCriteriaDTO
+     * @return
+     * @throws IOException
+     */
     @Override
     public List<AllPossibleRouteDetailsDTO> searchRouteForScenarioOne(SearchCriteriaDTO searchCriteriaDTO) throws IOException {
         List<AllPossibleRouteDetailsDTO> routeList = new ArrayList<>();
-        List<SearchResponseDTO> searchResponseDTOList = freightCostCalculationDao.getAllRouteList(searchCriteriaDTO);
+        String modeOfTransportQuery = "";
+        Boolean isModeAll = searchCriteriaDTO.getModeOfTransports().contains("All");
+        if (!isModeAll) {
+            modeOfTransportQuery = searchCriteriaDTO.getModeOfTransports().stream()
+                    .map((s) -> "^" + s + "$")
+                    .collect(Collectors.joining("|"));
+        }
+
+        List<SearchResponseDTO> searchResponseDTOList = freightCostCalculationDao.getAllRouteList(searchCriteriaDTO, modeOfTransportQuery);
         if (searchResponseDTOList != null && !searchResponseDTOList.isEmpty()) {
             ObjectMapper objectMapper = new ObjectMapper();
             for (SearchResponseDTO searchResponseDTO : searchResponseDTOList) {
@@ -49,12 +63,26 @@ public class FreightCostCalculationService implements IFreightCostCalculationSer
         return routeList;
     }
 
+    /***
+     *
+     * @param searchCriteriaDTO
+     * @return
+     * @throws Exception
+     */
     @Override
     public List<AllPossibleRouteDetailsDTO> searchRouteForScenarioTwo(SearchCriteriaDTO searchCriteriaDTO) throws Exception {
         List<AllPossibleRouteDetailsDTO> routeList = new ArrayList<>();
+        String modeOfTransportQuery = "";
+        Boolean isModeAll = searchCriteriaDTO.getModeOfTransports().contains("All");
+        if (!isModeAll) {
+            modeOfTransportQuery = searchCriteriaDTO.getModeOfTransports().stream()
+                    .map((s) -> "^" + s + "$")
+                    .collect(Collectors.joining("|"));
+        }
+
         GeocodingResult geocodingResult = getLatLongByCity(searchCriteriaDTO.getDestination());
         if (geocodingResult != null) {
-            List<SearchResponseDTO> searchResponseDTOList = freightCostCalculationDao.getAllNearestRouteList(searchCriteriaDTO, geocodingResult.geometry.location.lat, geocodingResult.geometry.location.lng);
+            List<SearchResponseDTO> searchResponseDTOList = freightCostCalculationDao.getAllNearestRouteList(searchCriteriaDTO, geocodingResult.geometry.location.lat, geocodingResult.geometry.location.lng, modeOfTransportQuery);
             if (searchResponseDTOList != null && !searchResponseDTOList.isEmpty()) {
                 ObjectMapper objectMapper = new ObjectMapper();
                 for (SearchResponseDTO searchResponseDTO : searchResponseDTOList) {

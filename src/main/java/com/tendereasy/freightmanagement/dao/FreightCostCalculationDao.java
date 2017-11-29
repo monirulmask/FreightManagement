@@ -15,23 +15,29 @@ import java.util.List;
 public class FreightCostCalculationDao extends BaseDao implements IFreightCostCalculationDao {
 
     @Override
-    public List<SearchResponseDTO> getAllRouteList(SearchCriteriaDTO searchCriteriaDTO) {
+    public List<SearchResponseDTO> getAllRouteList(SearchCriteriaDTO searchCriteriaDTO, String modeOfTransportQuery ) {
         //String query = "CALL usp_get_route_details('Stockholm','Orlando','',20,null,null,null,null)";
-        String query = "CALL usp_get_route_details(:source,:destination,'',:containerSize,null,null,null,null)";
+        String query = "CALL usp_get_route_details(:source,:destination,:modeOfTransports,:containerSize,:durationFrom,:durationTo,:costFrom,:costTo)";
         org.hibernate.Query hQuery = hibernateQuery(query, SearchResponseDTO.class);
         hQuery.setParameter("source", searchCriteriaDTO.getSource());
         hQuery.setParameter("destination", searchCriteriaDTO.getDestination());
+        hQuery.setParameter("modeOfTransports", modeOfTransportQuery);
         hQuery.setParameter("containerSize", searchCriteriaDTO.getContainerSize());
+        hQuery.setParameter("durationFrom", searchCriteriaDTO.getDurationFrom());
+        hQuery.setParameter("durationTo", searchCriteriaDTO.getDurationTo());
+        hQuery.setParameter("costFrom", searchCriteriaDTO.getCostFrom());
+        hQuery.setParameter("costTo", searchCriteriaDTO.getCostTo());
         List<SearchResponseDTO> searchResponseDTOList = hQuery.list();
         return searchResponseDTOList;
     }
 
     @Override
-    public List<SearchResponseDTO> getAllNearestRouteList(SearchCriteriaDTO searchCriteriaDTO, double lat, double lng) {
-        String query = "CALL usp_get_near_route_details(:source,:destination,'',:containerSize,null,null,null,null, :lat,:lng, :destination)";
+    public List<SearchResponseDTO> getAllNearestRouteList(SearchCriteriaDTO searchCriteriaDTO, double lat, double lng , String modeOfTransportQuery ) {
+        String query = "CALL usp_get_near_route_details(:source,:destination,:modeOfTransports,:containerSize, :lat,:lng, :destination)";
         org.hibernate.Query hQuery = hibernateQuery(query, SearchResponseDTO.class);
         hQuery.setParameter("source", searchCriteriaDTO.getSource());
         hQuery.setParameter("destination", searchCriteriaDTO.getDestination());
+        hQuery.setParameter("modeOfTransports", modeOfTransportQuery);
         hQuery.setParameter("containerSize", searchCriteriaDTO.getContainerSize());
         hQuery.setParameter("lat", lat);
         hQuery.setParameter("lng", lng);

@@ -10,7 +10,7 @@ import java.util.List;
  */
 public interface IFreightCostCalculationDao {
 
-    public List<SearchResponseDTO> getAllRouteList(SearchCriteriaDTO searchCriteriaDTO);
+    public List<SearchResponseDTO> getAllRouteList(SearchCriteriaDTO searchCriteriaDTO, String modeOfTransportQuery);
 
-    public List<SearchResponseDTO> getAllNearestRouteList(SearchCriteriaDTO searchCriteriaDTO, double lat, double lng);
+    public List<SearchResponseDTO> getAllNearestRouteList(SearchCriteriaDTO searchCriteriaDTO, double lat, double lng , String modeOfTransportQuery );
 }
