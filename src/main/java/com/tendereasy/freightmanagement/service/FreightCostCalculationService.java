@@ -30,7 +30,7 @@ public class FreightCostCalculationService implements IFreightCostCalculationSer
     private IFreightCostCalculationDao freightCostCalculationDao;
 
     /***
-     *
+     * Return all possible route between source and destination where both source and destination are available in system
      * @param searchCriteriaDTO
      * @return
      * @throws IOException
@@ -64,7 +64,7 @@ public class FreightCostCalculationService implements IFreightCostCalculationSer
     }
 
     /***
-     *
+     * Return all possible route between source and destination where source is available in system but destination is not available. So system will find all location near destination in 50KM radius and all possible path between them.
      * @param searchCriteriaDTO
      * @return
      * @throws Exception

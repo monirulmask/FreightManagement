@@ -32,6 +32,13 @@ public class FreightCostCalculationController {
         return "hello";
     }
 
+    /***
+     * Method for first scenario.
+     * @param searchCriteriaDTO
+     * @param errors
+     * @return
+     * @throws Exception
+     */
     @RequestMapping(value = "/scenarioOne", method = RequestMethod.POST, headers = "Accept=application/json")
     public ResponseEntity<?> scenarioOne(@Valid @RequestBody SearchCriteriaDTO searchCriteriaDTO, Errors errors) throws Exception {
         CustomerResponseMessageDTO response = new CustomerResponseMessageDTO();
@@ -55,6 +62,13 @@ public class FreightCostCalculationController {
         return ResponseEntity.ok(response);
     }
 
+    /***
+     * Method for 2nd scenario.
+     * @param searchCriteriaDTO
+     * @param errors
+     * @return
+     * @throws Exception
+     */
     @RequestMapping(value = "/scenarioTwo", method = RequestMethod.POST, headers = "Accept=application/json")
     public ResponseEntity<?> scenarioTwo(@Valid @RequestBody SearchCriteriaDTO searchCriteriaDTO, Errors errors) throws Exception {
         CustomerResponseMessageDTO response = new CustomerResponseMessageDTO();

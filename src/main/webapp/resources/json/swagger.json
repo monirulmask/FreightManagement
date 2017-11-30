@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "description": "This is API documentation for Tendereasy",
+    "description": "This is API documentation for Tendereasy. This API is developed using Spring MVC and MariaDB (10.2.10-MariaDB)",
     "version": "1.0.0",
     "title": "Freight Management"
   },
@@ -19,7 +19,7 @@
       "post": {
         "tags": ["Scenario"],
         "summary": "Return all possible route between source and destination where both source and destination are available in system",
-        "description": "Returns a map of status codes to quantities",
+        "description": "Returns a map of status codes to quantities(Click to expand)",
         "operationId": "scenarioOne",
         "produces": ["application/json"],
         "parameters": [{
@@ -31,13 +31,29 @@
         }],
         "responses": {
           "200": {
-            "description": "successful operation",
-            "schema": {
-              "type": "object",
-              "message": {
-                "type": "string"
-              }
-            }
+            "description": "successful operation with details route if exists"
+          },
+          "400": {"description": "Validation Error."}
+        }
+      }
+    },
+    "/scenarioTwo": {
+      "post": {
+        "tags": ["Scenario"],
+        "summary": "Return all possible route between source and destination where source is available in system but destination is not available. So system will find all location near destination in 50KM radius and all possible path between them.",
+        "description": "Returns a map of status codes to quantities(Click to expand)",
+        "operationId": "scenarioOne",
+        "produces": ["application/json"],
+        "parameters": [{
+          "in": "body",
+          "name": "body",
+          "description": "Search Criteria object",
+          "required": true,
+          "schema": {"$ref": "#/definitions/SearchCriteriaTwo"}
+        }],
+        "responses": {
+          "200": {
+            "description": "successful operation with details route if exists"
           },
           "400": {"description": "Validation Error."}
         }
@@ -83,6 +99,29 @@
         }
       },
       "xml": {"name": "SearchCriteriaOne"}
+    },
+    "SearchCriteriaTwo": {
+      "type": "object",
+      "properties": {
+        "source": {
+          "type": "string"
+        },
+        "destination": {
+          "type": "string"
+        },
+        "modeOfTransports": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["Ocean","Road","All"]
+          }
+        },
+        "containerSize": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      "xml": {"name": "SearchCriteriaTwo"}
     },
     "CustomerResponseMessage": {
       "type": "object",
