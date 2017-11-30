@@ -9,23 +9,23 @@
   "basePath": "/freightCostCalculation",
   "tags": [
     {
-      "name": "scenario",
-      "description": "Get possible route for different scenario"
+      "name": "Scenario",
+      "description": "Get possible route for different scenario. Following tabs contain each route information with required input parameter."
     }
   ],
   "schemes": ["http"],
   "paths": {
     "/scenarioOne": {
       "post": {
-        "tags": ["scenario"],
-        "summary": "Returns pet inventories by status",
+        "tags": ["Scenario"],
+        "summary": "Return all possible route between source and destination where both source and destination are available in system",
         "description": "Returns a map of status codes to quantities",
         "operationId": "scenarioOne",
         "produces": ["application/json"],
         "parameters": [{
           "in": "body",
           "name": "body",
-          "description": "Created user object",
+          "description": "Search Criteria object",
           "required": true,
           "schema": {"$ref": "#/definitions/SearchCriteriaOne"}
         }],
@@ -38,7 +38,8 @@
                 "type": "string"
               }
             }
-          }
+          },
+          "400": {"description": "Validation Error."}
         }
       }
     }
